@@ -7,21 +7,20 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class HelloApplication extends Application {
-    List<List<Integer>> rows = new ArrayList<>();
-    List<List<Integer>> columns = new ArrayList<>();
-    List<Integer> row1 = new ArrayList<>(3);
-    List<Integer> row2 = new ArrayList<>(3);
-    List<Integer> row3 = new ArrayList<>(3);
-    List<Integer> column1 = new ArrayList<>(3);
-    List<Integer> column2 = new ArrayList<>(3);
-    List<Integer> column3 = new ArrayList<>(3);
+    static List<List<Integer>> rows = new ArrayList<>();
+    static List<List<Integer>> columns = new ArrayList<>();
+    static List<Integer> row1 = new ArrayList<>(3);
+    static List<Integer> row2 = new ArrayList<>(3);
+    static List<Integer> row3 = new ArrayList<>(3);
+    static List<Integer> column1 = new ArrayList<>(3);
+    static List<Integer> column2 = new ArrayList<>(3);
+    static List<Integer> column3 = new ArrayList<>(3);
     @Override
     public void start(Stage stage){
         BuildListsOLists();
@@ -39,30 +38,23 @@ public class HelloApplication extends Application {
         columns.add(column2);
         columns.add(column3);
     }
-    public int AddNumber(List<Integer> givenRow, List<Integer> givenColumn, int column, int row){
+    public int AddNumber(List<Integer> givenRow, List<Integer> givenColumn){
         int addition = 0;
-        boolean ContinueLoop = true;
-        int z = 0;
-        while(ContinueLoop && z > 20){
-            addition = (int) (Math.random()*(9-1));
-            for (Integer test1 : givenRow){
-                if(test1 != addition){
-                    System.out.println("Not Inside");
-                }
-            }
-            for (Integer test2 : givenColumn){
-                if(test2 == addition){
-                    System.out.println("fuckyou");
-                }
-                else{
-                    System.out.println("Not Inside");
-                    givenRow.set(row, addition);
-                    givenColumn.set(column, addition);
-                    ContinueLoop = false;
-                }
-            }
-            z++;
+        List<Integer> testList = new ArrayList<>();
+        for (Integer entry : givenRow){
+            testList.add(entry);
         }
+        for (Integer entry : givenColumn){
+            testList.add(entry);
+        }
+        testList.add(0);
+        System.out.println(testList + " Test List");
+        while(testList.contains(addition)){
+            System.out.println("replaced " + addition);
+            addition = (int) (Math.random()*(4-1)+1);
+        }
+        givenRow.add(addition);
+        givenColumn.add(addition);
         return addition;
     }
     public Node CreateBoard(){
@@ -77,11 +69,14 @@ public class HelloApplication extends Application {
             row.setSpacing(10);
             holderVBox.getChildren().add(row);
             for(int b = 0; b < 3; b++){
-                Rectangle Tile = new Rectangle(150, 150);
-                Tile.setFill(Color.BISQUE);
+                StackPane Tile = new StackPane();
+                Tile.setMinSize(150, 150);
+                Tile.setBackground(new Background(new BackgroundFill((Color.BISQUE), null, null)));
                 row.getChildren().add(Tile);
                 Label number = new Label();
-                number.setText(String.valueOf(AddNumber(rows.get(a), columns.get(b), a, b)));
+                number.setFont(new Font("Arial", 50));
+                Tile.getChildren().add(number);
+                number.setText(String.valueOf(AddNumber(rows.get(a), columns.get(b))));
             }
             a++;
         }
