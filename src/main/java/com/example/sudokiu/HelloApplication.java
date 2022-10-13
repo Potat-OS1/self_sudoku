@@ -13,45 +13,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HelloApplication extends Application {
+    int numRows = 9;
+    int numColumns = 9;
+    int max = 0;
     static List<List<Integer>> rows = new ArrayList<>();
     static List<List<Integer>> columns = new ArrayList<>();
-    static List<Integer> row1 = new ArrayList<>(3);
-    static List<Integer> row2 = new ArrayList<>(3);
-    static List<Integer> row3 = new ArrayList<>(3);
-    static List<Integer> column1 = new ArrayList<>(3);
-    static List<Integer> column2 = new ArrayList<>(3);
-    static List<Integer> column3 = new ArrayList<>(3);
     @Override
     public void start(Stage stage){
         BuildListsOLists();
+        max = numRows;
+        if(numRows != numColumns) {
+            if (numRows % 6 < numColumns % 6) {
+                max = numColumns;
+            }
+        }
         Pane board = new Pane(CreateBoard());
-        Scene scene = new Scene(board, 490, 490);
+        Scene scene = new Scene(board, 1000, 1000);
         stage.setTitle("Sudoku");
         stage.setScene(scene);
         stage.show();
     }
     public void BuildListsOLists(){
-        rows.add(row1);
-        rows.add(row2);
-        rows.add(row3);
-        columns.add(column1);
-        columns.add(column2);
-        columns.add(column3);
+        for (int y = 0; y < numRows; y++){
+            List<Integer> row = new ArrayList<>();
+            rows.add(row);
+        }
+        for (int x = 0; x < numColumns; x++){
+            List<Integer> column = new ArrayList<>();
+            columns.add(column);
+        }
     }
     public int AddNumber(List<Integer> givenRow, List<Integer> givenColumn){
         int addition = 0;
         List<Integer> testList = new ArrayList<>();
-        for (Integer entry : givenRow){
-            testList.add(entry);
-        }
-        for (Integer entry : givenColumn){
-            testList.add(entry);
-        }
+        testList.addAll(givenRow);
+        testList.addAll(givenColumn);
         testList.add(0);
-        System.out.println(testList + " Test List");
-        while(testList.contains(addition)){
-            System.out.println("replaced " + addition);
-            addition = (int) (Math.random()*(4-1)+1);
+        int breakout = 0;
+        while(testList.contains(addition) && breakout < 100){
+            addition = (int) (Math.random()*((max + 1)-1)+1);
+            breakout++;
+        }
+        if (breakout > 100){
+            System.out.println(addition + "broke out");
         }
         givenRow.add(addition);
         givenColumn.add(addition);
@@ -64,17 +68,17 @@ public class HelloApplication extends Application {
         VBox holderVBox = new VBox(3);
         holderVBox.setSpacing(10);
         int a = 0;
-        while(a < 3){
+        while(a < numRows){
             HBox row = new HBox();
             row.setSpacing(10);
             holderVBox.getChildren().add(row);
-            for(int b = 0; b < 3; b++){
+            for(int b = 0; b < numColumns; b++){
                 StackPane Tile = new StackPane();
-                Tile.setMinSize(150, 150);
+                Tile.setMinSize(100, 100);
                 Tile.setBackground(new Background(new BackgroundFill((Color.BISQUE), null, null)));
                 row.getChildren().add(Tile);
                 Label number = new Label();
-                number.setFont(new Font("Arial", 50));
+                number.setFont(new Font("Arial", 30));
                 Tile.getChildren().add(number);
                 number.setText(String.valueOf(AddNumber(rows.get(a), columns.get(b))));
             }
